@@ -43,9 +43,9 @@ router.get('/:id', (req, res) => {
 });
 
 // create todo
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
     const newTodo = new Todo(req.body);
-    await newTodo.save((err) => {
+    newTodo.save((err) => {
         if (err) {
             res.status(500).json({
                 error: 'there is server side error',
@@ -60,8 +60,8 @@ router.post('/', async (req, res) => {
 
 // create multiple todo
 
-router.post('/all', async (req, res) => {
-    await Todo.insertMany(req.body, (err) => {
+router.post('/all', (req, res) => {
+    Todo.insertMany(req.body, (err) => {
         if (err) {
             console.log(err);
             res.status(500).json({
@@ -76,8 +76,8 @@ router.post('/all', async (req, res) => {
 });
 
 // update todo
-router.put('/:id', async (req, res) => {
-    await Todo.findByIdAndUpdate(
+router.put('/:id', (req, res) => {
+    Todo.findByIdAndUpdate(
         { _id: req.params.id },
         {
             $set: {
@@ -103,8 +103,8 @@ router.put('/:id', async (req, res) => {
 });
 
 // delete todo
-router.delete('/:id', async (req, res) => {
-    await Todo.deleteOne({ _id: req.params.id }, (err) => {
+router.delete('/:id', (req, res) => {
+    Todo.deleteOne({ _id: req.params.id }, (err) => {
         if (err) {
             res.status(500).json({
                 error: 'there is server side error',
