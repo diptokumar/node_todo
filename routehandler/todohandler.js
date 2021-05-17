@@ -6,25 +6,24 @@ const router = express.Router();
 // eslint-disable-next-line new-cap
 const Todo = new mongoose.model('Todo', todoSchema);
 
-// get all todo
+// get all todo using try block and async await
 router.get('/', async (req, res) => {
-    await Todo.find({ status: 'inactive' }, (err, data) => {
-        if (err) {
-            res.status(500).json({
-                error: 'there is server side error',
-            });
-        } else {
-            res.status(200).json({
-                result: data,
-                message: 'success',
-            });
-        }
-    });
+    try {
+        const data = await Todo.find({ status: 'active' });
+        res.status(200).json({
+            result: data,
+            message: 'success',
+        });
+    } catch (e) {
+        res.status(500).json({
+            error: 'there is server side error',
+        });
+    }
 });
 
-// get single todo
-router.get('/:id', async (req, res) => {
-    await Todo.find({ _id: req.params.id })
+// get single todo using callback
+router.get('/:id', (req, res) => {
+    Todo.find({ _id: req.params.id })
         .select({
             _id: 0,
             date: 0,
