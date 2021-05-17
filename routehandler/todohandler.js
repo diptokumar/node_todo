@@ -97,7 +97,8 @@ router.put('/:id', async (req, res) => {
                     success: 'Data inserted successfully',
                 });
             }
-        },
+            // eslint-disable-next-line comma-dangle
+        }
     );
 });
 
