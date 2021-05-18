@@ -21,6 +21,31 @@ router.get('/', async (req, res) => {
     }
 });
 
+// get active todo
+router.get('/active', async (req, res) => {
+    const todo = new Todo();
+    const data = await todo.findActive();
+    res.status(200).json({
+        data,
+    });
+});
+// get inactive todo
+router.get('/inactive', (req, res) => {
+    const todo = new Todo();
+    todo.findinActive((err, data) => {
+        res.status(200).json({ data });
+    });
+});
+// get static todo
+router.get('/potato', async (req, res) => {
+    const data = await Todo.findpotato();
+    res.status(200).json({ data });
+});
+// get query
+router.get('/language/:id', async (req, res) => {
+    const data = await Todo.find().findLang(req.params.id);
+    res.status(200).json({ data });
+});
 // get single todo using callback
 router.get('/:id', (req, res) => {
     Todo.find({ _id: req.params.id })
@@ -74,7 +99,6 @@ router.post('/all', (req, res) => {
         }
     });
 });
-
 // update todo
 router.put('/:id', (req, res) => {
     Todo.findByIdAndUpdate(
