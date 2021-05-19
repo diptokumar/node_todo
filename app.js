@@ -1,8 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 const todohandlers = require('./routehandler/todohandler');
+const userHandler = require('./routehandler/userHandler');
 // express app initialization
 const app = express();
+dotenv.config();
 app.use(express.json());
 
 // db connection
@@ -14,6 +17,7 @@ mongoose
     .catch((err) => console.log(err));
 // middle war routehandler
 app.use('/todo', todohandlers);
+app.use('/user', userHandler);
 
 // default error handler
 function errorHandler(err, req, res, next) {
@@ -22,6 +26,8 @@ function errorHandler(err, req, res, next) {
     }
     res.status(500).json({ error: err });
 }
+
+app.use(errorHandler);
 
 // server
 app.listen(5000, (err) => {

@@ -1,13 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const todoSchema = require('../schemas/todoSchema');
+const checkLogin = require('../middlewares/checklogin');
 
 const router = express.Router();
 // eslint-disable-next-line new-cap
 const Todo = new mongoose.model('Todo', todoSchema);
 
 // get all todo using try block and async await
-router.get('/', async (req, res) => {
+router.get('/',checkLogin ,async (req, res) => {
     try {
         const data = await Todo.find({ status: 'active' });
         res.status(200).json({
