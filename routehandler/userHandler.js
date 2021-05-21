@@ -40,16 +40,24 @@ router.post('/login', async (req, res)=>{
             res.status(401).json({
                 message: 'Authentication failed'
             })
-        }
-       
-
-        
+        }      
     }else{
         res.status(401).json({
             message: 'Authentication failed'
         })
     }
 })
-
-
+//all user
+router.get('/all', async (req, res)=>{
+    try {
+        const data = await User.find().populate("todos");
+        res.status(200).json({
+            data : data
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: 'User not found'
+        })
+    }
+});
 module.exports = router;

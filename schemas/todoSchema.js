@@ -6,6 +6,7 @@ const todoSchema = mongoose.Schema({
     description: { type: String, required: true },
     status: { type: String, enum: ['active', 'inactive'] },
     date: { type: Date, default: Date.now },
+    user: { type: mongoose.Types.ObjectId, ref: 'User' },
 });
 // instance methods
 todoSchema.methods = {
@@ -22,7 +23,7 @@ todoSchema.methods = {
 // static methods
 todoSchema.statics = {
     // eslint-disable-next-line object-shorthand
-    findpotato: function () {
+    findpotato: function () {        
         return this.find({ title: /potato/i });
     },
 };

@@ -2,15 +2,17 @@ const express = require('express');
 const mongoose = require('mongoose');
 const todoSchema = require('../schemas/todoSchema');
 const checkLogin = require('../middlewares/checklogin');
+const userSchema = require('../schemas/userSchema');
 
 const router = express.Router();
 // eslint-disable-next-line new-cap
 const Todo = new mongoose.model('Todo', todoSchema);
+const User = new mongoose.model('User', userSchema);
 
 // get all todo using try block and async await
 router.get('/',checkLogin ,async (req, res) => {
     try {
-        const data = await Todo.find({ status: 'active' });
+        const data = await Todo.find({ status: 'active' }).populate("user", "name userName").select({_id:0, date:0});
         res.status(200).json({
             result: data,
             message: 'success',
@@ -39,8 +41,12 @@ router.get('/inactive', (req, res) => {
 });
 // get static todo
 router.get('/potato', async (req, res) => {
-    const data = await Todo.findpotato();
-    res.status(200).json({ data });
+    try {
+        const data = await Todo.findpotato();
+    res.status(200).json({ data });  
+    }catch(err) {
+        console.log(err);
+    }
 });
 // get query
 router.get('/language/:id', async (req, res) => {
@@ -69,19 +75,26 @@ router.get('/:id', (req, res) => {
 });
 
 // create todo
-router.post('/', (req, res) => {
-    const newTodo = new Todo(req.body);
-    newTodo.save((err) => {
-        if (err) {
-            res.status(500).json({
-                error: 'there is server side error',
-            });
-        } else {
-            res.status(200).json({
-                success: 'Data inserted successfully',
-            });
-        }
+router.post('/', checkLogin ,async(req, res) => {
+    const newTodo = new Todo({
+        ...req.body, user: req.userId,
     });
+    try {
+        const todo = await newTodo.save();
+        await User.updateOne({_id: req.userId},{
+            $push: {
+                todos: todo._id
+            }
+        });
+        res.status(200).json({
+            Success: 'there is insert success',
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            error: 'there is server side error',
+        });
+    }
 });
 
 // create multiple todo
